@@ -1,1 +1,23 @@
 .skillweave/
+
+# Local project and ingest data never belongs to the source repository.
+local-projects/
+projects/local/
+.spectraform/projects/
+project-data/
+assets/imported/
+assets/user/
+assets/project/
+assets/audio/
+assets/masks/
+assets/references/
+
+# Reproducible runtime output stays local.
+generated/imports/
+generated/diagnostics/
+generated/exports/
+diagnostics/
+exports/
+
+# Spectraform-owned or rights-cleared product assets may be added later only
+# below assets/source/ or assets/library/ and remain subject to license review.
