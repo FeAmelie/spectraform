@@ -1,0 +1,37 @@
+schema_version: 1
+product:
+  name: Spectraform
+  display_name_status: confirmed
+foundation:
+  version: 0.1.0
+  scope: application-foundation
+execution:
+  methodology: assay
+  autonomy_policy: unicorn
+  session_schedule: batch
+platform:
+  reference_os: macOS
+  reference_architecture: arm64
+  reference_device_status: unconfirmed
+  support_scope: macos-first-cross-platform-core
+runtime:
+  network_policy: no-network-required
+  processing: local-only
+assets:
+  core_policy: asset-neutral
+  ingest: local-files-only
+  originals: immutable
+  user_project_assets_repository: forbidden
+open_decisions:
+  license:
+    status: unresolved
+    value: replace-before-release
+  bundle_identifier:
+    status: unresolved
+    value: replace-before-release
+  legal_owner:
+    status: unresolved
+    value: replace-before-release
+source_concepts:
+  product: 2026-11-10-psypanic-spectraform-gesamtkonzept-v3.md
+  technical: 2026-11-10-psypanic-spectraform-technisches-konzept-v3.md
