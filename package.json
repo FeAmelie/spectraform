@@ -1,0 +1,22 @@
+{
+  "name": "spectraform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first audio-reactive visual engine and desktop application.",
+  "packageManager": "pnpm@12.19.0",
+  "engines": {
+    "node": "24.22.2",
+    "pnpm": "12.19.0"
+  },
+  "scripts": {
+    "toolchain:check": "node scripts/check-toolchain.mts --allow-missing-ffmpeg",
+    "test:toolchain": "node --test tests/toolchain/toolchain-version.test.ts"
+  },
+  "spectraform": {
+    "toolchain": {
+      "ffmpegMinimum": "9.0.2"
+    },
+    "runtimeNetworkCapability": "none"
+  }
+}
