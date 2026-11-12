@@ -1,0 +1,14 @@
+.skillweave/
+dist/
+node_modules/
+src-tauri/gen/
+src-tauri/target/
+config/foundation.yaml
+docs/
+pnpm-lock.yaml
+scripts/check-foundation.mts
+scripts/check-repository-policy.mts
+scripts/check-toolchain.mts
+tests/contracts/foundation-baseline.test.ts
+tests/repository/repository-policy.test.ts
+tests/toolchain/toolchain-version.test.ts
