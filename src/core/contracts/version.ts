@@ -39,14 +39,22 @@ export function readContractVersion(value: unknown, label = "contract"): Contrac
   }
 
   const { major, minor } = value.contractVersion;
-  if (!Number.isInteger(major) || Number(major) < 0 || !Number.isInteger(minor) || Number(minor) < 0) {
+  if (
+    !Number.isInteger(major) ||
+    Number(major) < 0 ||
+    !Number.isInteger(minor) ||
+    Number(minor) < 0
+  ) {
     throw new TypeError(`${label} contractVersion major and minor must be non-negative integers`);
   }
 
   return { major: Number(major), minor: Number(minor) };
 }
 
-export function parseV1Contract<T extends VersionedContractV1>(value: unknown, label = "contract"): T {
+export function parseV1Contract<T extends VersionedContractV1>(
+  value: unknown,
+  label = "contract",
+): T {
   const version = readContractVersion(value, label);
   if (version.major !== CONTRACT_MAJOR_VERSION) {
     throw new UnsupportedContractVersionError(label, version.major);

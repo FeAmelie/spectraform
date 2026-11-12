@@ -38,12 +38,22 @@ function isForbidden(from: Layer, to: Layer): boolean {
   return false;
 }
 
-async function resolveLocalImport(importer: string, specifier: string): Promise<string | undefined> {
+async function resolveLocalImport(
+  importer: string,
+  specifier: string,
+): Promise<string | undefined> {
   if (!specifier.startsWith(".")) return undefined;
   const base = resolve(dirname(importer), specifier);
   const candidates = sourceExtensions.has(extname(base))
     ? [base]
-    : [base, `${base}.ts`, `${base}.tsx`, `${base}.mts`, join(base, "index.ts"), join(base, "index.tsx")];
+    : [
+        base,
+        `${base}.ts`,
+        `${base}.tsx`,
+        `${base}.mts`,
+        join(base, "index.ts"),
+        join(base, "index.tsx"),
+      ];
 
   for (const candidate of candidates) {
     try {
@@ -80,7 +90,9 @@ function findCycles(graph: ReadonlyMap<string, readonly string[]>): string[][] {
   return cycles;
 }
 
-export async function checkDependencyDirection(repositoryRoot: string): Promise<DependencyCheckResult> {
+export async function checkDependencyDirection(
+  repositoryRoot: string,
+): Promise<DependencyCheckResult> {
   const sourceRoot = join(resolve(repositoryRoot), "src");
   const files = await walk(sourceRoot);
   const graph = new Map<string, string[]>();
@@ -91,7 +103,10 @@ export async function checkDependencyDirection(repositoryRoot: string): Promise<
   for (const file of files) {
     const content = await readFile(file, "utf8");
     const relativeFile = relative(repositoryRoot, file);
-    if (relativeFile.startsWith(`src${sep}core${sep}`) && content.toLowerCase().includes(prohibitedProductToken)) {
+    if (
+      relativeFile.startsWith(`src${sep}core${sep}`) &&
+      content.toLowerCase().includes(prohibitedProductToken)
+    ) {
       violations.push(`${relativeFile}: core contract contains a project-specific identifier`);
     }
 
@@ -104,17 +119,25 @@ export async function checkDependencyDirection(repositoryRoot: string): Promise<
       const fromLayer = layerOf(file, sourceRoot);
       const toLayer = layerOf(dependency, sourceRoot);
       if (isForbidden(fromLayer, toLayer)) {
-        violations.push(`${relativeFile}: forbidden ${fromLayer} -> ${toLayer} import (${match[1]})`);
+        violations.push(
+          `${relativeFile}: forbidden ${fromLayer} -> ${toLayer} import (${match[1]})`,
+        );
       }
     }
     graph.set(file, dependencies);
   }
 
   for (const cycle of findCycles(graph)) {
-    violations.push(`import cycle: ${cycle.map((file) => relative(repositoryRoot, file)).join(" -> ")}`);
+    violations.push(
+      `import cycle: ${cycle.map((file) => relative(repositoryRoot, file)).join(" -> ")}`,
+    );
   }
 
-  return { filesChecked: files.length, importsChecked, violations: [...new Set(violations)].sort() };
+  return {
+    filesChecked: files.length,
+    importsChecked,
+    violations: [...new Set(violations)].sort(),
+  };
 }
 
 async function main(): Promise<void> {
@@ -125,7 +148,9 @@ async function main(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  console.log(`dependency direction ok: ${result.filesChecked} files, ${result.importsChecked} local imports`);
+  console.log(
+    `dependency direction ok: ${result.filesChecked} files, ${result.importsChecked} local imports`,
+  );
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
