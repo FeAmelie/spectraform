@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
@@ -25,6 +25,12 @@ function run(root: string, gate: string) {
 function fixture(): string {
   return mkdtempSync(join(tmpdir(), "spectraform-quality-"));
 }
+
+test("strict typecheck includes Vite client and CSS side-effect declarations", () => {
+  const config = JSON.parse(readFileSync(join(repositoryRoot, "tsconfig.json"), "utf8"));
+  assert.equal(config.compilerOptions.strict, true);
+  assert.deepEqual(config.compilerOptions.types, ["node", "vite/client"]);
+});
 
 test("format gate rejects an isolated unformatted fixture", () => {
   const root = fixture();
