@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Spectraform",
+  "version": "0.1.0",
+  "identifier": "app.spectraform.desktop",
+  "build": {
+    "removeUnusedCommands": true
+  },
+  "app": {
+    "security": {
+      "csp": "default-src 'none'; style-src 'unsafe-inline'"
+    },
+    "windows": [
+      {
+        "label": "main",
+        "title": "Spectraform",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 600,
+        "url": "index.html",
+        "visible": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": false,
+    "icon": []
+  }
+}
