@@ -23,7 +23,9 @@ export class UnsupportedContractVersionError extends Error {
   readonly receivedMajor: number;
 
   constructor(label: string, receivedMajor: number) {
-    super(`${label} requires contract major ${CONTRACT_MAJOR_VERSION}; received ${receivedMajor}`);
+    super(
+      `${label} requires contract major ${CONTRACT_MAJOR_VERSION}; received ${receivedMajor}`,
+    );
     this.name = "UnsupportedContractVersionError";
     this.receivedMajor = receivedMajor;
   }
@@ -33,20 +35,33 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export function readContractVersion(value: unknown, label = "contract"): ContractVersion {
+export function readContractVersion(
+  value: unknown,
+  label = "contract",
+): ContractVersion {
   if (!isRecord(value) || !isRecord(value.contractVersion)) {
     throw new TypeError(`${label} must contain a contractVersion object`);
   }
 
   const { major, minor } = value.contractVersion;
-  if (!Number.isInteger(major) || Number(major) < 0 || !Number.isInteger(minor) || Number(minor) < 0) {
-    throw new TypeError(`${label} contractVersion major and minor must be non-negative integers`);
+  if (
+    !Number.isInteger(major) ||
+    Number(major) < 0 ||
+    !Number.isInteger(minor) ||
+    Number(minor) < 0
+  ) {
+    throw new TypeError(
+      `${label} contractVersion major and minor must be non-negative integers`,
+    );
   }
 
   return { major: Number(major), minor: Number(minor) };
 }
 
-export function parseV1Contract<T extends VersionedContractV1>(value: unknown, label = "contract"): T {
+export function parseV1Contract<T extends VersionedContractV1>(
+  value: unknown,
+  label = "contract",
+): T {
   const version = readContractVersion(value, label);
   if (version.major !== CONTRACT_MAJOR_VERSION) {
     throw new UnsupportedContractVersionError(label, version.major);

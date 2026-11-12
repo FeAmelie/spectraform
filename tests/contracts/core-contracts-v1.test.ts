@@ -39,7 +39,14 @@ const fixtures = {
     frameId: "frame-1",
     timeSeconds: 1.25,
     deterministicSeed: 7,
-    layers: [{ layerId: "layer-1", visible: true, opacity: 1, properties: { amount: 0.5 } }],
+    layers: [
+      {
+        layerId: "layer-1",
+        visible: true,
+        opacity: 1,
+        properties: { amount: 0.5 },
+      },
+    ],
   } satisfies VisualStateV1,
   frame: {
     contractVersion: CONTRACT_VERSION_V1,
@@ -62,16 +69,26 @@ test("all v1 data contracts serialize deterministically and retain their version
 });
 
 test("unknown major versions fail closed", () => {
-  const incompatible = { ...fixtures.runtime, contractVersion: { major: 2, minor: 0 } };
+  const incompatible = {
+    ...fixtures.runtime,
+    contractVersion: { major: 2, minor: 0 },
+  };
   assert.throws(
     () => parseV1Contract<RuntimeContextV1>(incompatible, "RuntimeContext"),
-    (error: unknown) => error instanceof UnsupportedContractVersionError && error.receivedMajor === 2,
+    (error: unknown) =>
+      error instanceof UnsupportedContractVersionError &&
+      error.receivedMajor === 2,
   );
 });
 
 test("additive optional fields survive parsing without changing v1 semantics", () => {
-  const extended = JSON.parse(JSON.stringify({ ...fixtures.runtime, futureHint: "retained" }));
-  const parsed = parseV1Contract<RuntimeContextV1 & { futureHint?: string }>(extended, "RuntimeContext");
+  const extended = JSON.parse(
+    JSON.stringify({ ...fixtures.runtime, futureHint: "retained" }),
+  );
+  const parsed = parseV1Contract<RuntimeContextV1 & { futureHint?: string }>(
+    extended,
+    "RuntimeContext",
+  );
   assert.equal(parsed.futureHint, "retained");
   assert.equal(parsed.networkCapability, "none");
 });
