@@ -1,4 +1,4 @@
-type AppStatusState = 'idle' | 'ready' | 'processing' | 'error';
+type AppStatusState = "idle" | "ready" | "processing" | "error";
 
 interface AppStatusProps {
   state: AppStatusState;

@@ -1,4 +1,4 @@
-import { Component, type ComponentChildren } from 'preact';
+import { Component, type ComponentChildren } from "preact";
 
 interface AppErrorBoundaryProps {
   children: ComponentChildren;
