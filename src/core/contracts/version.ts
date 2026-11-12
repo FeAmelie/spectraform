@@ -23,9 +23,7 @@ export class UnsupportedContractVersionError extends Error {
   readonly receivedMajor: number;
 
   constructor(label: string, receivedMajor: number) {
-    super(
-      `${label} requires contract major ${CONTRACT_MAJOR_VERSION}; received ${receivedMajor}`,
-    );
+    super(`${label} requires contract major ${CONTRACT_MAJOR_VERSION}; received ${receivedMajor}`);
     this.name = "UnsupportedContractVersionError";
     this.receivedMajor = receivedMajor;
   }
@@ -35,10 +33,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export function readContractVersion(
-  value: unknown,
-  label = "contract",
-): ContractVersion {
+export function readContractVersion(value: unknown, label = "contract"): ContractVersion {
   if (!isRecord(value) || !isRecord(value.contractVersion)) {
     throw new TypeError(`${label} must contain a contractVersion object`);
   }
@@ -50,9 +45,7 @@ export function readContractVersion(
     !Number.isInteger(minor) ||
     Number(minor) < 0
   ) {
-    throw new TypeError(
-      `${label} contractVersion major and minor must be non-negative integers`,
-    );
+    throw new TypeError(`${label} contractVersion major and minor must be non-negative integers`);
   }
 
   return { major: Number(major), minor: Number(minor) };

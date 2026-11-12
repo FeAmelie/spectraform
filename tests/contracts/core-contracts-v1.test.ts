@@ -76,15 +76,12 @@ test("unknown major versions fail closed", () => {
   assert.throws(
     () => parseV1Contract<RuntimeContextV1>(incompatible, "RuntimeContext"),
     (error: unknown) =>
-      error instanceof UnsupportedContractVersionError &&
-      error.receivedMajor === 2,
+      error instanceof UnsupportedContractVersionError && error.receivedMajor === 2,
   );
 });
 
 test("additive optional fields survive parsing without changing v1 semantics", () => {
-  const extended = JSON.parse(
-    JSON.stringify({ ...fixtures.runtime, futureHint: "retained" }),
-  );
+  const extended = JSON.parse(JSON.stringify({ ...fixtures.runtime, futureHint: "retained" }));
   const parsed = parseV1Contract<RuntimeContextV1 & { futureHint?: string }>(
     extended,
     "RuntimeContext",

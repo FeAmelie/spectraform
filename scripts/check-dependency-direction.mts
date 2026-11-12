@@ -11,8 +11,7 @@ export interface DependencyCheckResult {
 }
 
 const sourceExtensions = new Set([".ts", ".tsx", ".mts"]);
-const importPattern =
-  /(?:import|export)\s+(?:type\s+)?(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g;
+const importPattern = /(?:import|export)\s+(?:type\s+)?(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g;
 
 async function walk(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -28,13 +27,7 @@ async function walk(directory: string): Promise<string[]> {
 
 function layerOf(file: string, sourceRoot: string): Layer {
   const first = relative(sourceRoot, file).split(sep)[0];
-  if (
-    first === "core" ||
-    first === "ui" ||
-    first === "platform" ||
-    first === "app"
-  )
-    return first;
+  if (first === "core" || first === "ui" || first === "platform" || first === "app") return first;
   return "feature";
 }
 
@@ -114,9 +107,7 @@ export async function checkDependencyDirection(
       relativeFile.startsWith(`src${sep}core${sep}`) &&
       content.toLowerCase().includes(prohibitedProductToken)
     ) {
-      violations.push(
-        `${relativeFile}: core contract contains a project-specific identifier`,
-      );
+      violations.push(`${relativeFile}: core contract contains a project-specific identifier`);
     }
 
     const dependencies: string[] = [];
@@ -150,9 +141,7 @@ export async function checkDependencyDirection(
 }
 
 async function main(): Promise<void> {
-  const repositoryRoot = resolve(
-    process.argv[2] ?? fileURLToPath(new URL("..", import.meta.url)),
-  );
+  const repositoryRoot = resolve(process.argv[2] ?? fileURLToPath(new URL("..", import.meta.url)));
   const result = await checkDependencyDirection(repositoryRoot);
   if (result.violations.length > 0) {
     console.error(result.violations.join("\n"));
@@ -164,9 +153,6 @@ async function main(): Promise<void> {
   );
 }
 
-if (
-  process.argv[1] &&
-  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
-) {
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   await main();
 }
