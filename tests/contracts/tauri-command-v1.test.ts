@@ -2,10 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const rustCommandUrl = new URL(
-  "../../src-tauri/src/commands/foundation.rs",
-  import.meta.url,
-);
+const rustCommandUrl = new URL("../../src-tauri/src/commands/foundation.rs", import.meta.url);
 const frontendCommandUrl = new URL(
   "../../src/platform/tauri/foundationCommand.ts",
   import.meta.url,

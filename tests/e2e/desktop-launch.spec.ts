@@ -3,10 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const configUrl = new URL("../../src-tauri/tauri.conf.json", import.meta.url);
-const capabilityUrl = new URL(
-  "../../src-tauri/capabilities/base.json",
-  import.meta.url,
-);
+const capabilityUrl = new URL("../../src-tauri/capabilities/base.json", import.meta.url);
 const buildScriptUrl = new URL("../../src-tauri/build.rs", import.meta.url);
 
 test("desktop shell bundles a generated local frontend and no remote URL", async () => {
@@ -32,7 +29,9 @@ test("base capability is restricted to the main window and fullscreen", async ()
   assert.deepEqual(capability.windows, ["main"]);
   assert.ok(capability.permissions.includes("core:window:allow-set-fullscreen"));
   assert.ok(capability.permissions.includes("core:window:allow-is-fullscreen"));
-  assert.ok(!capability.permissions.some((permission: string) =>
-    /http|shell|upload|download/i.test(permission),
-  ));
+  assert.ok(
+    !capability.permissions.some((permission: string) =>
+      /http|shell|upload|download/i.test(permission),
+    ),
+  );
 });
