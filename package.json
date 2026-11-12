@@ -10,8 +10,29 @@
     "pnpm": "12.19.0"
   },
   "scripts": {
+    "dev:web": "vite",
+    "build:web": "tsc --noEmit && vite build",
+    "test:web": "playwright test tests/e2e/web-shell.spec.ts",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "quality:check": "node scripts/check-quality.mts",
     "toolchain:check": "node scripts/check-toolchain.mts --allow-missing-ffmpeg",
     "test:toolchain": "node --test tests/toolchain/toolchain-version.test.ts"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "preact": "11.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "@preact/preset-vite": "2.10.6",
+    "@types/node": "24.19.2",
+    "eslint": "10.14.0",
+    "prettier": "3.10.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.2",
+    "vite": "8.3.8"
   },
   "spectraform": {
     "toolchain": {
