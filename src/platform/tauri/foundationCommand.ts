@@ -30,13 +30,9 @@ type TauriInternals = {
   invoke: FoundationInvoker;
 };
 
-function defaultInvoker<Result>(
-  command: string,
-  args: Record<string, unknown>,
-): Promise<Result> {
-  const internals = (
-    globalThis as typeof globalThis & { __TAURI_INTERNALS__?: TauriInternals }
-  ).__TAURI_INTERNALS__;
+function defaultInvoker<Result>(command: string, args: Record<string, unknown>): Promise<Result> {
+  const internals = (globalThis as typeof globalThis & { __TAURI_INTERNALS__?: TauriInternals })
+    .__TAURI_INTERNALS__;
 
   if (!internals) {
     return Promise.reject(new Error("Tauri IPC is unavailable"));
