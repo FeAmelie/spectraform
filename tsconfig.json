@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "types": ["node", "vite/client"]
+  },
+  "include": ["src", "scripts", "tests", "vite.config.ts"],
+  "exclude": [
+    "scripts/check-foundation.mts",
+    "scripts/check-repository-policy.mts",
+    "scripts/check-toolchain.mts",
+    "tests/contracts/foundation-baseline.test.ts",
+    "tests/repository/repository-policy.test.ts",
+    "tests/toolchain/toolchain-version.test.ts"
+  ]
+}
