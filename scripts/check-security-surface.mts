@@ -12,7 +12,7 @@ const reviewedBasePermissions = [
   "core:window:allow-is-fullscreen",
   "core:window:allow-set-fullscreen",
 ] as const;
-const reviewedPermissions = new Set(reviewedBasePermissions);
+const reviewedPermissions: ReadonlySet<string> = new Set(reviewedBasePermissions);
 
 export interface SecuritySurfaceReport {
   capabilities: string[];

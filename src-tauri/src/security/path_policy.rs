@@ -169,7 +169,10 @@ fn looks_like_foreign_platform_path(raw: &str) -> bool {
 mod tests {
     use super::*;
     use std::fs;
-    use std::time::{SystemTime, UNIX_EPOCH};
+    use std::sync::atomic::{AtomicU64, Ordering};
+    use std::sync::{Arc, Barrier};
+
+    static TEST_ROOT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
     struct TestRoots {
         base: PathBuf,
@@ -181,14 +184,12 @@ mod tests {
 
     impl TestRoots {
         fn create() -> Self {
-            let nonce = SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .expect("clock must be after unix epoch")
-                .as_nanos();
+            let sequence = TEST_ROOT_SEQUENCE.fetch_add(1, Ordering::Relaxed);
             let base = std::env::temp_dir().join(format!(
-                "spectraform-path-policy-{}-{nonce}",
+                "spectraform-path-policy-{}-{sequence}",
                 std::process::id()
             ));
+            fs::create_dir(&base).expect("test root must be uniquely created");
             let project = base.join("project");
             let export = base.join("export");
             let diagnostics = base.join("diagnostics");
@@ -220,6 +221,31 @@ mod tests {
         fn drop(&mut self) {
             fs::remove_dir_all(&self.base).expect("temporary roots must be removable");
         }
+    }
+
+    #[test]
+    fn creates_unique_test_roots_in_parallel() {
+        const THREADS: usize = 64;
+        let barrier = Arc::new(Barrier::new(THREADS));
+        let handles = (0..THREADS)
+            .map(|_| {
+                let barrier = Arc::clone(&barrier);
+                std::thread::spawn(move || {
+                    barrier.wait();
+                    TestRoots::create()
+                })
+            })
+            .collect::<Vec<_>>();
+        let roots = handles
+            .into_iter()
+            .map(|handle| handle.join().expect("test root worker must complete"))
+            .collect::<Vec<_>>();
+        let unique = roots
+            .iter()
+            .map(|roots| roots.base.clone())
+            .collect::<std::collections::HashSet<_>>();
+
+        assert_eq!(unique.len(), THREADS);
     }
 
     #[test]

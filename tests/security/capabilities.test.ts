@@ -7,7 +7,7 @@ const capabilityUrls = [
   new URL("../../src-tauri/capabilities/project.json", import.meta.url),
 ];
 
-const allowedPermissions = new Set([
+const allowedPermissions: ReadonlySet<string> = new Set([
   "core:default",
   "core:window:allow-is-fullscreen",
   "core:window:allow-set-fullscreen",
@@ -27,7 +27,9 @@ test("desktop capabilities expose only the reviewed local window surface", async
     assert.equal(capability.remote, undefined);
     assert.deepEqual(capability.windows, ["main"]);
     for (const permission of capability.permissions) {
-      assert.equal(typeof permission, "string");
+      if (typeof permission !== "string") {
+        assert.fail("capability permission must be a string");
+      }
       assert.ok(allowedPermissions.has(permission), `undeclared permission: ${permission}`);
     }
   }
