@@ -1,4 +1,3 @@
-use std::fs::{OpenOptions, create_dir_all};
 use std::io::{self, Write};
 use std::path::Path;
 
@@ -7,8 +6,8 @@ pub const TELEMETRY_ENABLED: bool = false;
 const _: [(); 1] = [(); (!TELEMETRY_ENABLED) as usize];
 
 pub fn append_local_log(log_directory: &Path, redacted_json_line: &str) -> io::Result<()> {
-    create_dir_all(log_directory)?;
-    let mut file = OpenOptions::new()
+    std::fs::create_dir_all(log_directory)?;
+    let mut file = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
         .open(log_directory.join("spectraform-diagnostics.jsonl"))?;
