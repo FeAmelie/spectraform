@@ -1,4 +1,8 @@
 mod commands;
+pub mod diagnostics {
+    pub mod log_writer;
+}
+pub mod security;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

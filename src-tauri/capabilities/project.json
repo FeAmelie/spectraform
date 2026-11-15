@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "project",
+  "description": "Project paths remain behind the reviewed Rust path policy.",
+  "windows": ["main"],
+  "permissions": []
+}
