@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import { createSyntheticAudio } from "./audio.ts";
-import { createSyntheticConfigSources, seedToken } from "./config.ts";
+import { createSyntheticConfigSources, FIXTURE_GENERATOR_VERSION, seedToken } from "./config.ts";
 import {
   createInvalidContrastConfig,
   createTraversalAssetConfig,
@@ -15,6 +15,7 @@ export interface SyntheticProject {
   readonly root: string;
   readonly seed: number;
   readonly scenario: SyntheticFixtureScenario;
+  readonly manifestFile: string;
   readonly configDirectory: string;
   readonly audioFile: string;
   readonly svgFile: string;
@@ -32,6 +33,7 @@ export function createSyntheticProject(options: SyntheticProjectOptions): Synthe
   const root = mkdtempSync(join(tmpdir(), `spectraform-fixture-${token}-`));
   const configDirectory = join(root, "config");
   const generatedDirectory = join(root, "generated");
+  const manifestFile = join(root, "fixture-manifest.json");
   const audioFile = join(generatedDirectory, `audio-${token}.wav`);
   const svgFile = join(generatedDirectory, `mask-${token}.svg`);
   let cleaned = false;
@@ -51,6 +53,25 @@ export function createSyntheticProject(options: SyntheticProjectOptions): Synthe
       writeFileSync(join(configDirectory, source.file), content, "utf8");
     }
 
+    writeFileSync(
+      manifestFile,
+      `${JSON.stringify(
+        {
+          fixture_generator_version: FIXTURE_GENERATOR_VERSION,
+          seed: options.seed,
+          scenario,
+          config_files: createSyntheticConfigSources(options.seed).map(
+            ({ file }) => `config/${file}`,
+          ),
+          audio_file: `generated/audio-${token}.wav`,
+          svg_file: `generated/mask-${token}.svg`,
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+
     const audio = createSyntheticAudio(options.seed);
     writeFileSync(audioFile, audio.wav);
     writeFileSync(
@@ -69,6 +90,7 @@ export function createSyntheticProject(options: SyntheticProjectOptions): Synthe
     root,
     seed: options.seed,
     scenario,
+    manifestFile,
     configDirectory,
     audioFile,
     svgFile,

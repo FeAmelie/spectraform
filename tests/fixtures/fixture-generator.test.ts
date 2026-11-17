@@ -13,6 +13,7 @@ import {
   createSyntheticConfigSources,
   createSyntheticProject,
   createSyntheticSvg,
+  FIXTURE_GENERATOR_VERSION,
   readSyntheticProjectFile,
   withSyntheticProject,
 } from "./generators/index.ts";
@@ -42,6 +43,18 @@ test("the same seed creates byte-identical text and numeric audio", () => {
   assert.deepEqual([...firstAudio.samples], [...secondAudio.samples]);
   assert.deepEqual(firstAudio.wav, secondAudio.wav);
   assert.equal(digest(firstAudio.wav), digest(secondAudio.wav));
+
+  const firstProject = createSyntheticProject({ seed: 0x51a7 });
+  const secondProject = createSyntheticProject({ seed: 0x51a7 });
+  try {
+    assert.deepEqual(
+      readFileSync(firstProject.manifestFile),
+      readFileSync(secondProject.manifestFile),
+    );
+  } finally {
+    firstProject.cleanup();
+    secondProject.cleanup();
+  }
 });
 
 test("different seeds create different deterministic fixture hashes", () => {
@@ -55,8 +68,18 @@ test("a positive project validates all ten config families and cleans up", () =>
   const project = createSyntheticProject({ seed: 101, scenario: "positive" });
   assert.equal(project.root.startsWith(`${tmpdir()}/`), true);
   try {
+    const manifest = JSON.parse(readFileSync(project.manifestFile, "utf8")) as Record<
+      string,
+      unknown
+    >;
+    assert.equal(FIXTURE_GENERATOR_VERSION, 1);
+    assert.equal(manifest.fixture_generator_version, FIXTURE_GENERATOR_VERSION);
+    assert.equal("schema_version" in manifest, false);
+
     for (const source of createSyntheticConfigSources(101)) {
       const yaml = readFileSync(resolve(project.configDirectory, source.file), "utf8");
+      assert.match(yaml, /^schema_version: 1$/mu);
+      assert.doesNotMatch(yaml, /fixture_generator_version/u);
       parseConfigYaml({ family: source.family, file: source.file, yaml });
     }
     assert.equal(

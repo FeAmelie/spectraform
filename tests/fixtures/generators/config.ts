@@ -1,5 +1,7 @@
 import type { ConfigFamily } from "../../../src/config/registry.ts";
 
+export const FIXTURE_GENERATOR_VERSION = 1 as const;
+
 export interface GeneratedConfigSource {
   readonly family: ConfigFamily;
   readonly file: string;
