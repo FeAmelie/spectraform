@@ -17,6 +17,7 @@ test("the Rust invoke handler preserves the reviewed v1 command allowlist", asyn
   assert.deepEqual(commands, [
     "commands::foundation::foundation_status",
     "commands::foundation::set_fullscreen",
+    "commands::project::load_project_snapshot",
   ]);
   assert.doesNotMatch(handler, /shell|http|network|download|upload|open_url/i);
 });
