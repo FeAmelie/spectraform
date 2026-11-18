@@ -10,7 +10,8 @@ pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             commands::foundation::foundation_status,
-            commands::foundation::set_fullscreen
+            commands::foundation::set_fullscreen,
+            commands::project::load_project_snapshot
         ])
         .run(tauri::generate_context!())
         .expect("Spectraform desktop runtime failed");
