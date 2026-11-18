@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
-use crate::export::encoder_job::{EncoderJobError, EncoderJobV1, ENCODER_JOB_VERSION};
-use crate::export::ffmpeg::{detect_ffmpeg, FfmpegCapability};
+use crate::export::encoder_job;
+use crate::export::ffmpeg;
 use crate::security::path_policy::CanonicalPathPolicy;
+
+type EncoderJobError = encoder_job::EncoderJobError;
+type EncoderJobV1 = encoder_job::EncoderJobV1;
 
 pub const ENCODER_COMMAND_CONTRACT_VERSION: u16 = 1;
 
@@ -40,9 +43,9 @@ pub enum EncoderCommandError {
 
 pub fn inspect_ffmpeg_capability(
     request: EncoderCapabilityRequest,
-) -> Result<FfmpegCapability, EncoderCommandError> {
+) -> Result<ffmpeg::FfmpegCapability, EncoderCommandError> {
     validate_contract(request.command_contract_version)?;
-    Ok(detect_ffmpeg())
+    Ok(ffmpeg::detect_ffmpeg())
 }
 
 pub fn validate_encoder_job(
@@ -60,7 +63,7 @@ pub fn validate_encoder_job(
         .validate(&policy)
         .map_err(|error| EncoderCommandError::InvalidJob { error })?;
     Ok(EncoderJobValidationResponse {
-        encoder_job_version: ENCODER_JOB_VERSION,
+        encoder_job_version: encoder_job::ENCODER_JOB_VERSION,
         valid: true,
     })
 }
