@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 const reviewedCommandPaths = [
   "commands::foundation::foundation_status",
   "commands::foundation::set_fullscreen",
+  "commands::project::load_project_snapshot",
 ] as const;
 const reviewedBasePermissions = [
   "core:default",
