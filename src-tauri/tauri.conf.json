@@ -24,7 +24,12 @@
     ]
   },
   "bundle": {
-    "active": false,
-    "icon": []
+    "active": true,
+    "targets": ["app"],
+    "icon": [],
+    "macOS": {
+      "signingIdentity": "-",
+      "hardenedRuntime": false
+    }
   }
 }
