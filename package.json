@@ -13,7 +13,7 @@
     "bootstrap": "node scripts/bootstrap.mts",
     "dev": "vite",
     "validate": "node scripts/validate.mts",
-    "test": "node scripts/validate.mts --tests-only",
+    "test": "node scripts/run-foundation-tests.mts",
     "build": "node scripts/build.mts",
     "export:smoke": "node scripts/export-smoke.mts",
     "dev:web": "vite",
@@ -41,6 +41,7 @@
     "prettier": "3.10.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.2",
+    "vitest": "5.1.1",
     "vite": "8.3.8"
   },
   "spectraform": {
