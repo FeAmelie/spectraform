@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { resolve } from "node:path";
 import { test as nodeTest } from "node:test";
 
@@ -58,11 +66,13 @@ foundationTest("known Tauri outputs are cleaned without removing preexisting unk
   const generatedRoot = resolve(root, "src-tauri/gen");
   const generatedRootExisted = existsSync(generatedRoot);
   const schemas = resolve(generatedRoot, "schemas");
+  const schemasExisted = existsSync(schemas);
   const knownOutput = resolve(schemas, "capabilities.json");
-  const operatorSentinel = resolve(generatedRoot, "operator-owned.keep");
   mkdirSync(schemas, { recursive: true });
-  writeFileSync(knownOutput, "{}\n");
-  writeFileSync(operatorSentinel, "preserve\n");
+  if (!existsSync(knownOutput)) writeFileSync(knownOutput, "{}\n");
+  const testOwnedDirectory = mkdtempSync(resolve(generatedRoot, "foundation-contract-"));
+  const testOwnedSentinel = resolve(testOwnedDirectory, "sentinel.keep");
+  writeFileSync(testOwnedSentinel, "preserve\n");
 
   try {
     const result = spawnSync(
@@ -72,9 +82,19 @@ foundationTest("known Tauri outputs are cleaned without removing preexisting unk
     );
     assert.equal(result.status, 1, result.stderr);
     assert.equal(existsSync(knownOutput), false);
-    assert.equal(readFileSync(operatorSentinel, "utf8"), "preserve\n");
+    assert.equal(readFileSync(testOwnedSentinel, "utf8"), "preserve\n");
   } finally {
-    rmSync(operatorSentinel, { force: true });
-    if (!generatedRootExisted) rmSync(generatedRoot, { recursive: true, force: true });
+    rmSync(testOwnedDirectory, { recursive: true, force: true });
+    if (!schemasExisted) removeEmptyDirectory(schemas);
+    if (!generatedRootExisted) removeEmptyDirectory(generatedRoot);
   }
 });
+
+function removeEmptyDirectory(directory: string): void {
+  try {
+    rmdirSync(directory);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code !== "ENOENT" && code !== "ENOTEMPTY") throw error;
+  }
+}
