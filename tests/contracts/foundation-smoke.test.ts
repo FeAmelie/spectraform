@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { test as nodeTest } from "node:test";
 
@@ -17,6 +17,9 @@ foundationTest("the canonical harness declares all five isolated headless layers
   assert.match(vitestConfig, /environment:\s*"node"/u);
   assert.match(playwrightConfig, /headless:\s*true/u);
   assert.match(playwrightConfig, /offline:\s*true/u);
+  assert.match(playwrightConfig, /SPECTRAFORM_PLAYWRIGHT_OUTPUT_DIR/u);
+  assert.match(aggregator, /generatedOutputPaths/u);
+  assert.match(aggregator, /rmSync\(harnessOutputRoot/u);
   assert.doesNotMatch(playwrightConfig, /webServer|launchOptions:\s*\{[^}]*headless:\s*false/su);
 });
 
@@ -37,4 +40,6 @@ foundationTest("a controlled failure is attributed to every layer with exit code
     assert.equal(report.failedLayer, layer);
     assert.deepEqual(report.layers, [{ id: layer, status: "fail", childExitCode: 23 }]);
   }
+  assert.equal(existsSync(resolve(root, "test-results")), false);
+  assert.equal(existsSync(resolve(root, "src-tauri/gen")), false);
 });

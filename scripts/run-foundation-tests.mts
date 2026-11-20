@@ -1,5 +1,7 @@
 import { spawnSync } from "node:child_process";
-import { resolve } from "node:path";
+import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 
 type LayerId = "unit" | "contract" | "integration" | "visual" | "desktop";
 
@@ -19,6 +21,10 @@ const root = resolve(import.meta.dirname, "..");
 const vitest = process.env.SPECTRAFORM_VITEST_BIN ?? resolve(root, "node_modules/.bin/vitest");
 const playwright =
   process.env.SPECTRAFORM_PLAYWRIGHT_BIN ?? resolve(root, "node_modules/.bin/playwright");
+const generatedOutputPaths = [resolve(root, "test-results"), resolve(root, "src-tauri/gen")];
+const preexistingOutputs = new Set(generatedOutputPaths.filter((path) => existsSync(path)));
+const harnessOutputRoot = mkdtempSync(join(tmpdir(), "spectraform-foundation-harness-"));
+process.env.SPECTRAFORM_PLAYWRIGHT_OUTPUT_DIR = join(harnessOutputRoot, "playwright");
 const layers: readonly LayerDefinition[] = [
   {
     id: "unit",
@@ -57,7 +63,15 @@ const selected = probeLayer
 
 if (selected.length !== 1 && (probeLayer || requestedLayer)) failUsage("unknown Foundation layer");
 
-const results = selected.map((layer) => runLayer(layer, probeLayer === layer.id));
+let results: readonly LayerResult[];
+try {
+  results = selected.map((layer) => runLayer(layer, probeLayer === layer.id));
+} finally {
+  rmSync(harnessOutputRoot, { recursive: true, force: true });
+  for (const path of generatedOutputPaths) {
+    if (!preexistingOutputs.has(path)) rmSync(path, { recursive: true, force: true });
+  }
+}
 const failure = results.find(({ status }) => status === "fail");
 process.stdout.write(
   `${JSON.stringify({
