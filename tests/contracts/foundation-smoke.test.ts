@@ -20,6 +20,8 @@ foundationTest("the canonical harness declares all five isolated headless layers
   const vitestConfig = readFileSync(resolve(root, "vitest.config.ts"), "utf8");
   const playwrightConfig = readFileSync(resolve(root, "playwright.config.ts"), "utf8");
   const aggregator = readFileSync(resolve(root, "scripts/run-foundation-tests.mts"), "utf8");
+  const build = readFileSync(resolve(root, "scripts/build.mts"), "utf8");
+  const gitignore = readFileSync(resolve(root, ".gitignore"), "utf8");
 
   for (const layer of layers) assert.match(aggregator, new RegExp(`id: "${layer}"`, "u"));
   assert.match(vitestConfig, /environment:\s*"node"/u);
@@ -31,6 +33,10 @@ foundationTest("the canonical harness declares all five isolated headless layers
   assert.match(aggregator, /--validate/u);
   assert.match(aggregator, /runCanonicalValidation/u);
   assert.match(aggregator, /rmSync\(harnessOutputRoot/u);
+  assert.match(build, /knownTauriGeneratedFiles/u);
+  assert.match(build, /if \(!tauriSchemasExisted\) removeEmptyDirectory\(tauriSchemas\)/u);
+  assert.match(build, /if \(!tauriGenExisted\) removeEmptyDirectory\(tauriGen\)/u);
+  assert.match(gitignore, /^node_modules\/$/mu);
   assert.doesNotMatch(playwrightConfig, /webServer|launchOptions:\s*\{[^}]*headless:\s*false/su);
 });
 
