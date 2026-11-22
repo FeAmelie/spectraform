@@ -1,4 +1,5 @@
 .skillweave/
+node_modules/
 
 # Local project and ingest data never belongs to the source repository.
 local-projects/
