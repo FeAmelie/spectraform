@@ -1,0 +1,200 @@
+name: Foundation gates
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 24.22.2
+  PNPM_VERSION: 12.19.0
+  RUST_VERSION: 1.99.1
+  CARGO_TERM_COLOR: always
+
+jobs:
+  format:
+    name: Format
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.19.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+
+  lint:
+    name: Lint
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.19.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.19.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+
+  rustfmt:
+    name: Rustfmt
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+          components: rustfmt
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
+      - run: cargo fetch --manifest-path src-tauri/Cargo.toml --locked
+      - run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+          components: clippy
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
+      - run: cargo fetch --manifest-path src-tauri/Cargo.toml --locked
+      - run: cargo clippy --manifest-path src-tauri/Cargo.toml --locked --all-targets -- -D warnings
+
+  validate:
+    name: Validate
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.19.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+          components: rustfmt, clippy
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-foundation-${{ hashFiles('pnpm-lock.yaml', 'src-tauri/Cargo.lock') }}
+      - run: pnpm install --frozen-lockfile
+      - run: cargo fetch --manifest-path src-tauri/Cargo.toml --locked
+      - run: pnpm validate
+
+  tests:
+    name: Tests
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.19.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-foundation-${{ hashFiles('pnpm-lock.yaml', 'src-tauri/Cargo.lock') }}
+      - run: pnpm install --frozen-lockfile
+      - run: cargo fetch --manifest-path src-tauri/Cargo.toml --locked
+      - run: pnpm test
+
+  tauri-build:
+    name: Tauri build
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.19.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-foundation-${{ hashFiles('pnpm-lock.yaml', 'src-tauri/Cargo.lock') }}
+      - run: pnpm install --frozen-lockfile
+      - run: cargo fetch --manifest-path src-tauri/Cargo.toml --locked
+      - run: pnpm build
+
+  foundation:
+    name: Foundation aggregate
+    if: ${{ always() }}
+    runs-on: macos-14
+    needs: [format, lint, typecheck, rustfmt, clippy, validate, tests, tauri-build]
+    steps:
+      - name: Require every gate
+        env:
+          GATE_RESULTS: ${{ join(needs.*.result, ',') }}
+        run: test "$GATE_RESULTS" = "success,success,success,success,success,success,success,success"
