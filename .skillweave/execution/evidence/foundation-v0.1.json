@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "sequence_id": "spectraform-foundation-v0.1",
+  "task_id": "FND-020",
+  "status": "fail",
+  "recorded_at": "2026-11-23T12:41:49Z",
+  "methodology": "assay",
+  "autonomy_policy": "unicorn",
+  "branch": "integration/phase-7",
+  "worktree": "/Users/amelielange/Documents/repositories/spectraform-worktrees/integration-phase-7",
+  "phase_base_sha": "4678007648bce3ea1fe956138011cba322efc5f5",
+  "reviewed_head_sha": null,
+  "remote_tip_sha": null,
+  "changed_files": [
+    ".skillweave/execution/evidence/foundation-v0.1.json",
+    ".skillweave/execution/reports/foundation-v0.1-gate.md"
+  ],
+  "predecessors": {
+    "required": 19,
+    "passes_true": 19,
+    "status": "pass",
+    "source": "/Users/amelielange/Documents/repositories/spectraform/.skillweave/prds/prd.json"
+  },
+  "acceptance_results": [
+    {
+      "criterion": "all 19 predecessor tasks have passes true",
+      "status": "pass"
+    },
+    {
+      "criterion": "fresh checkout completes bootstrap, validate, test and build offline",
+      "status": "fail",
+      "detail": "Pinned-toolchain preflight failed before bootstrap: Node 24.22.2, pnpm 12.19.0 and Rust 1.99.1 are unavailable in the authorized execution environment."
+    },
+    {
+      "criterion": "security, contract, visual, packaging and asset-policy smokes pass",
+      "status": "not_run",
+      "detail": "Fail-fast stop after pinned-toolchain preflight failure."
+    },
+    {
+      "criterion": "development app starts headlessly and reports deterministic synthetic frame",
+      "status": "not_run",
+      "detail": "Fail-fast stop after pinned-toolchain preflight failure."
+    }
+  ],
+  "verification_results": {
+    "phase_base_exact": "pass",
+    "tracked_worktree_clean_before_execution": "pass",
+    "pinned_node_24_22_2": "fail; no authorized executable found; bundled Node is 24.22.3",
+    "pinned_pnpm_12_19_0": "fail; no authorized executable found; bundled pnpm is 11.25.0",
+    "pinned_rust_1_99_1": "fail; rustc and cargo are absent",
+    "clean_checkout_bootstrap": "not_run",
+    "validate": "not_run",
+    "test": "not_run",
+    "build": "not_run",
+    "offline_export_smoke": "not_run",
+    "security_contract_visual_packaging_asset_policy": "not_run",
+    "output_clean": "not_run",
+    "red_proof": "not_run",
+    "green_proof": "not_run"
+  },
+  "commands_run": [
+    "node --version",
+    "pnpm --version",
+    "rustc --version",
+    "cargo --version",
+    "local authorized tool-cache discovery for exact pinned executables"
+  ],
+  "gate_decision": "FAIL",
+  "failed_gate": "pinned-toolchain-preflight",
+  "blockers": [
+    "The exact canonical toolchain is unavailable locally, and downloading toolchains from external hosts is outside the authorized network scope."
+  ],
+  "known_limitations": [
+    "No Foundation runtime gate was executed after the failed preflight.",
+    "This evidence is an ops failure record, not a cold review."
+  ],
+  "residual_risks": [
+    "FND-020 acceptance remains unverified."
+  ],
+  "headless_only": true,
+  "external_assets_accessed": false,
+  "visible_gui_or_browser_launched": false,
+  "prd_passes": false,
+  "reviewer_role": null,
+  "ops_role": "phase-7-ops",
+  "releasechain_readiness": false,
+  "next_action": "Provision the exact pinned headless toolchain within the authorized scope, then rerun FND-020 from a clean Phase-7 worktree."
+}
