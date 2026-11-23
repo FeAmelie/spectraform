@@ -2,81 +2,68 @@
   "schema_version": 1,
   "sequence_id": "spectraform-foundation-v0.1",
   "task_id": "FND-020",
-  "status": "fail",
-  "recorded_at": "2026-11-23T12:41:49Z",
+  "status": "review_ready",
+  "recorded_at": "2026-11-23T12:58:11Z",
   "methodology": "assay",
   "autonomy_policy": "unicorn",
   "branch": "integration/phase-7",
   "worktree": "/Users/amelielange/Documents/repositories/spectraform-worktrees/integration-phase-7",
   "phase_base_sha": "4678007648bce3ea1fe956138011cba322efc5f5",
+  "candidate_parent_sha": "f67bb9c722f63358c1e70d76b6491a7c709aecf6",
   "reviewed_head_sha": null,
   "remote_tip_sha": null,
   "changed_files": [
     ".skillweave/execution/evidence/foundation-v0.1.json",
     ".skillweave/execution/reports/foundation-v0.1-gate.md"
   ],
-  "predecessors": {
-    "required": 19,
-    "passes_true": 19,
-    "status": "pass",
-    "source": "/Users/amelielange/Documents/repositories/spectraform/.skillweave/prds/prd.json"
+  "predecessors": {"required": 19, "passes_true": 19, "status": "pass"},
+  "toolchain_proofs": {
+    "node": "24.22.2; official archive SHA-256 aa9549349e47dffaa42dcf95d6e06ade8c4bdafc980979883b88767670df385a",
+    "pnpm": "12.19.0; registry SRI sha512-hzJ7ZhmFMgWDTkvlm6OiMeMD2fXkNZEu3jMSt1Obea+JCUL2UTsFpGkHRWZoiARcCbM/xCDCzS072VwBuiHb6w==; SHA-1 61965341dddb38123c869bf9603488813444e4a0",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "1.99.1 (5f94df478 2026-08-27)",
+    "rustfmt": "1.10.0-stable",
+    "clippy": "0.1.99",
+    "rustup_init_sha256": "63752a1919a3a4793173ec70f8f212621a7ce38ba6a246095984482f4de20f9f"
   },
   "acceptance_results": [
-    {
-      "criterion": "all 19 predecessor tasks have passes true",
-      "status": "pass"
-    },
-    {
-      "criterion": "fresh checkout completes bootstrap, validate, test and build offline",
-      "status": "fail",
-      "detail": "Pinned-toolchain preflight failed before bootstrap: Node 24.22.2, pnpm 12.19.0 and Rust 1.99.1 are unavailable in the authorized execution environment."
-    },
-    {
-      "criterion": "security, contract, visual, packaging and asset-policy smokes pass",
-      "status": "not_run",
-      "detail": "Fail-fast stop after pinned-toolchain preflight failure."
-    },
-    {
-      "criterion": "development app starts headlessly and reports deterministic synthetic frame",
-      "status": "not_run",
-      "detail": "Fail-fast stop after pinned-toolchain preflight failure."
-    }
+    {"criterion": "all 19 predecessor tasks have passes true", "status": "pass"},
+    {"criterion": "fresh isolated worktree completes bootstrap, validate, test and build offline", "status": "pass"},
+    {"criterion": "ad-hoc arm64 development app launches headlessly and reports the deterministic synthetic frame", "status": "pass"},
+    {"criterion": "valid project and security failure boundaries pass", "status": "pass"},
+    {"criterion": "canonical CI contract and local commands pass on the same source state", "status": "pass"},
+    {"criterion": "Git index contains no user, project, audio, mask or export assets", "status": "pass"},
+    {"criterion": "all evidence is present before passes true", "status": "pending_distinct_cold_review"}
   ],
   "verification_results": {
-    "phase_base_exact": "pass",
-    "tracked_worktree_clean_before_execution": "pass",
-    "pinned_node_24_22_2": "fail; no authorized executable found; bundled Node is 24.22.3",
-    "pinned_pnpm_12_19_0": "fail; no authorized executable found; bundled pnpm is 11.25.0",
-    "pinned_rust_1_99_1": "fail; rustc and cargo are absent",
-    "clean_checkout_bootstrap": "not_run",
-    "validate": "not_run",
-    "test": "not_run",
-    "build": "not_run",
-    "offline_export_smoke": "not_run",
-    "security_contract_visual_packaging_asset_policy": "not_run",
-    "output_clean": "not_run",
-    "red_proof": "not_run",
-    "green_proof": "not_run"
+    "bootstrap_offline": "pass; frozen lockfile, 205 packages reused after isolated cache population",
+    "documentation": "pass; 10 guides and 10 ADRs",
+    "validate": "pass; 85 Node tests and 20 Rust tests",
+    "foundation_layers": "pass; unit 3, contract 3, integration 1, visual 1, desktop 1 headless",
+    "controlled_failure_probes": "pass; all five layers aggregate exit 1 with child exit 23 and exact attribution",
+    "build": "pass; Vite and locked-offline Rust build; temporary outputs removed",
+    "export_smoke": "pass; deterministic asset-free frame; explicit FFmpeg capability-skip",
+    "quality": "pass; Prettier, ESLint, TypeScript, rustfmt and Clippy",
+    "security_contract_repository": "pass; 29 focused tests plus repository policy",
+    "packaging": "pass; ad-hoc signed arm64 app-only bundle, version 0.1.0, commit f67bb9c722f63358c1e70d76b6491a7c709aecf6",
+    "headless_launch": "pass; architecture arm64, signature adhoc, synthetic frame verified",
+    "distribution_boundaries": "pass; no DMG, Developer ID, notarization or package-manager distribution",
+    "asset_policy": "pass; tracked media count 0",
+    "runtime_network_capability": "none",
+    "visible_gui_or_browser": "none",
+    "external_assets": "none",
+    "output_clean": "pass; dist, test-results, src-tauri/target and src-tauri/gen absent; tracked worktree clean before evidence update",
+    "red_proof": "phase base invariant exits 1 because FND-020 review-ready evidence is absent",
+    "green_proof": "candidate evidence invariant exits 0"
   },
-  "commands_run": [
-    "node --version",
-    "pnpm --version",
-    "rustc --version",
-    "cargo --version",
-    "local authorized tool-cache discovery for exact pinned executables"
-  ],
-  "gate_decision": "FAIL",
-  "failed_gate": "pinned-toolchain-preflight",
-  "blockers": [
-    "The exact canonical toolchain is unavailable locally, and downloading toolchains from external hosts is outside the authorized network scope."
-  ],
+  "gate_decision": "PASS_PENDING_COLD_REVIEW",
+  "failed_gate": null,
+  "blockers": [],
   "known_limitations": [
-    "No Foundation runtime gate was executed after the failed preflight.",
-    "This evidence is an ops failure record, not a cold review."
+    "FFmpeg is absent and native export correctly reports a capability-skip; it is not required for the Foundation development-app gate.",
+    "Remote CI was not queried because network authorization was limited to dependency materialization and Git SHA equality; the cold-reviewed FND-017 workflow contract and identical local commands passed."
   ],
-  "residual_risks": [
-    "FND-020 acceptance remains unverified."
-  ],
+  "residual_risks": ["Distinct cold review has not yet signed the exact remote candidate SHA."],
   "headless_only": true,
   "external_assets_accessed": false,
   "visible_gui_or_browser_launched": false,
@@ -84,5 +71,5 @@
   "reviewer_role": null,
   "ops_role": "phase-7-ops",
   "releasechain_readiness": false,
-  "next_action": "Provision the exact pinned headless toolchain within the authorized scope, then rerun FND-020 from a clean Phase-7 worktree."
+  "next_action": "Push the exact candidate, refetch for remote equality, then obtain a distinct cold review before setting FND-020 passes true."
 }

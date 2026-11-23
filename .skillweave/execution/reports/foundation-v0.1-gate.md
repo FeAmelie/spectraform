@@ -1,13 +1,16 @@
-# Foundation v0.1 gate — FAIL
+# Foundation v0.1 gate — review ready
 
 - Task: `FND-020`
 - Phase base: `4678007648bce3ea1fe956138011cba322efc5f5`
-- Failed gate: `pinned-toolchain-preflight`
+- Candidate parent: `f67bb9c722f63358c1e70d76b6491a7c709aecf6`
+- Operational gates: **PASS**
 - Predecessors: 19/19 report `passes: true`
-- FND-020: `passes: false`
+- FND-020: `passes: false` pending distinct cold review
 
-The exact canonical toolchain is unavailable in the authorized execution environment. Node `24.22.2`, pnpm `12.19.0`, and Rust `1.99.1` could not be found in the Spectraform repository, declared worktrees, `/private/tmp`, bundled headless runtime, or approved local tool caches. The bundled runtime exposes Node `24.22.3` and pnpm `11.25.0`; Rust is absent.
+The isolated Phase 7 worktree passed the pinned-toolchain proof, offline frozen bootstrap, documentation, validation, all five Foundation test layers, five controlled failure probes, build and output cleanup, security/contract/repository checks, deterministic visual/export smoke, and the explicit macOS development-app package gate.
 
-Fail-fast policy stopped the assay before bootstrap. Clean-checkout, offline validate/test/build, security, contract, visual, packaging, asset-policy, output-clean, red/green, and headless app-smoke gates were not run. No GUI, browser, external PsyPanic asset, app data, product file, PRD status, progress log, merge, tag, release, notarization, publication, or package-manager distribution was touched.
+The generated `Spectraform.app` is arm64-only, ad-hoc signed, app-only, contains version `0.1.0` and commit `f67bb9c722f63358c1e70d76b6491a7c709aecf6`, and launches only through the established headless smoke path with the deterministic synthetic frame. No DMG, Developer ID, notarization, package-manager distribution, GUI, browser, runtime network capability, user/project asset, or external PsyPanic asset was used.
 
-Next action: provision the exact pinned headless toolchain within the authorized scope and rerun FND-020 from a clean Phase-7 worktree. A distinct cold review is not yet eligible.
+FFmpeg is absent and the export smoke returned its declared capability-skip after the deterministic visual checks passed. This does not block the Foundation development-app gate.
+
+The exact remote candidate SHA must now receive a distinct cold review. Until then `passes` remains false and releasechain readiness remains false.
